@@ -55,13 +55,11 @@ const ChatBox = ({ messages, onSendMessage, onLogout, wrapperRef, receiver }) =>
       </AppBar>
       <Box>
         <div className="messages" ref={wrapperRef}>
-          {messages
-            ? messages.map((message, index) => (
-              <div key={`message-${index}`} className={message.from === 'Me' ? 'self' : ''}>
-                <div className="bubble">{message.body}</div>
-              </div>
-            ))
-            : 'No messages here'}
+          {messages && messages.map((message, index) => (
+            <div key={`message-${index}`} className={message.from === 'Me' ? 'self' : ''}>
+              <div className="bubble">{message.body}</div>
+            </div>
+          ))}
         </div>
         <div className="chat-box">
           <textarea
