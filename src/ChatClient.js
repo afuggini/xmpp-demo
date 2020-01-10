@@ -1,11 +1,10 @@
 import * as XMPP from 'stanza'
 
 export default class ChatClient {
-  constructor ({ onAuthFailed, onAuthSuccess, onMessage, onStreamError }) {
+  constructor ({ onAuthFailed, onAuthSuccess, onMessage }) {
     this.onAuthFailed = onAuthFailed
     this.onAuthSuccess = onAuthSuccess
     this.onMessage = onMessage
-    this.onStreamError = onStreamError
   }
 
   create ({ username, password }) {
@@ -23,10 +22,8 @@ export default class ChatClient {
     })
     client.on('auth:failed', this.onAuthFailed)
     client.on('auth:success', this.onAuthSuccess)
-    client.on('stream:error', this.onStreamError)
     client.on('*', console.log)
     client.on('message', this.onMessage)
-    // client.on('connected', onConnect)
     client.on('message', msg => console.log('Message: ' + JSON.stringify(msg)))
     this.client = client
     return client
