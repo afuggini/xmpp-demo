@@ -1,0 +1,43 @@
+.ChatBox .messages {
+  width: 100%;
+  position: absolute;
+  top: 4rem; bottom: 6rem;
+  overflow: scroll;
+}
+
+.ChatBox .messages > div {
+  margin: .5rem
+}
+
+.ChatBox .messages > div .bubble {
+  background: #ccc;
+  border-radius: .75rem;
+  display: inline-block;
+  max-width: 60%;
+  padding: .6rem .75rem;
+}
+
+.ChatBox .messages > div.self {
+  text-align: right;
+}
+
+.ChatBox .messages > div.self .bubble {
+  background: #2196f3;
+  color: #ffffff;
+}
+
+.ChatBox .chat-box {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.ChatBox .chat-box textarea {
+  border: 0 none;
+  border-top: 1px solid #666;
+  display: block;
+  height: 5rem;
+  padding: .5rem;
+  width: 100%;
+}
