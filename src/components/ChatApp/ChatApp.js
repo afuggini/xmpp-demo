@@ -33,8 +33,7 @@ class ChatApp extends React.Component {
     this.chatClient = new ChatClient({
       onAuthFailed: this.onAuthFailed.bind(this),
       onAuthSuccess: this.onAuthSuccess.bind(this),
-      onMessage: this.onMessage.bind(this),
-      onStreamError: this.onStreamError.bind(this)
+      onMessage: this.onMessage.bind(this)
     })
     this.wrapper = React.createRef()
   }
@@ -58,10 +57,6 @@ class ChatApp extends React.Component {
 
   onAuthSuccess () {
     this.setState({ loggingIn: false, loggedIn: true })
-  }
-
-  onStreamError () {
-    return
   }
 
   onLogin (credentials, receiver) {
