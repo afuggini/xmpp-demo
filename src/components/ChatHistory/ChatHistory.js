@@ -8,7 +8,6 @@ import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
 import HistoryList from './HistoryList'
-import './ChatHistory.css'
 
 const useStyles = makeStyles(theme => ({
   newChat: {
