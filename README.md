@@ -8,6 +8,11 @@ This app uses conversejs.org servers. Therefore please login with a `@conversejs
 
 To start a new chat also enter `@conversejs.org` accounts.
 
+Some of the things that were left out for simplicity purposes:
+
+- Authentication security (password is kept in memory unencrypted, makes this not suitable for production)
+- Redux for state management
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

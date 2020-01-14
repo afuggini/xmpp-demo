@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import Modal from '@material-ui/core/Modal'
@@ -29,7 +30,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   noChats: {
-    padding: theme.spacing(1, 3)
+    padding: theme.spacing(3)
   },
   addIcon: {
     marginBottom: '-4px'
@@ -51,7 +52,7 @@ const ChatHistory = ({ messages, onNewChat }) => {
     <div className="ChatHistory">
       {Object.keys(messages).length
         ? <HistoryList messages={messages} onNewChat={onNewChat} />
-        : <p className={classes.noChats}>No chats yet. Start a new chat by clicking the <AddIcon className={classes.addIcon} /> button.</p>}
+        : <Typography className={classes.noChats}>No chats yet. Start a new chat by clicking the <AddIcon className={classes.addIcon} /> button.</Typography>}
       <Fab
         color="primary"
         aria-label="add"
