@@ -12,6 +12,7 @@ Some of the things that were left out for simplicity purposes:
 
 - Authentication security (password is kept in memory unencrypted, makes this not suitable for production)
 - Redux for state management
+- Module security warnings (again, would have to fix before it is suitable for production)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
