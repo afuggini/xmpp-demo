@@ -129,10 +129,10 @@ class ChatApp extends React.Component {
   }
 
   onNewChat (receiver) {
-    this.setState({
-      receiver,
-      section: 'chat'
-    })
+    if (receiver.indexOf('@conversejs.org') < 0) {
+      receiver += '@conversejs.org'
+    }
+    this.setState({ receiver, section: 'chat' })
   }
 
   scrollChat () {
