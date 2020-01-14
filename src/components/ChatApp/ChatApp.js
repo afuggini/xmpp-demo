@@ -1,6 +1,7 @@
 import React from 'react'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-import ChatBox from '../ChatBox'
+import { CookiesProvider, withCookies } from 'react-cookie'
+import MainScreen from '../MainScreen'
 import Login from '../Login'
 import ChatClient from '../../ChatClient'
 
@@ -22,14 +23,18 @@ const theme = createMuiTheme({
 class ChatApp extends React.Component {
   constructor () {
     super()
-    this.state = {
+    this.initialState = {
+      section: 'history',
       username: '',
+      password: '',
       receiver: '',
       loggedIn: false,
       loggingIn: false,
-      messages: [],
-      loginError: ''
+      messages: {},
+      loginError: '',
+      connecting: true
     }
+    this.state = { ...this.initialState }
     this.chatClient = new ChatClient({
       onAuthFailed: this.onAuthFailed.bind(this),
       onAuthSuccess: this.onAuthSuccess.bind(this),
@@ -38,13 +43,41 @@ class ChatApp extends React.Component {
     this.wrapper = React.createRef()
   }
 
+  componentDidMount () {
+    const { cookies } = this.props
+    const loginCookie = cookies.get('credentials')
+    if (loginCookie) {
+      this.onLogin(loginCookie)
+      const messages = localStorage.getItem('messages')
+      this.setState({
+        loggedIn: true,
+        loggingIn: false,
+        connecting: true,
+        messages: messages ? JSON.parse(messages) : {}
+      })
+    }
+  }
+
   onSendMessage (body) {
-    this.chatClient.send({ to: this.state.receiver, body })
-    this.setState({
-      messages: [ ...this.state.messages, { from: 'Me', body } ]
-    }, () => {
-      this.wrapper.current.scrollBy(0, 1000000)
-    })
+    const { messages, receiver } = this.state
+    const updatedMessages = { ...messages }
+    updatedMessages[receiver] = messages[receiver] || []
+    updatedMessages[receiver].push({ from: 'Me', to: receiver, body })
+    this.chatClient.send({ to: receiver, body })
+    this.setState({ messages: updatedMessages }, this.scrollChat.bind(this))
+    localStorage.setItem('messages', JSON.stringify(updatedMessages))
+  }
+
+  onMessage (message) {
+    if (message.body) {
+      const { messages } = this.state
+      const receiver = message.from.split('/')[0]
+      const updatedMessages = { ...messages }
+      updatedMessages[receiver] = messages[receiver] || []
+      updatedMessages[receiver].push({ from: receiver, body: message.body })
+      this.setState({ messages: updatedMessages }, this.scrollChat.bind(this))
+      localStorage.setItem('messages', JSON.stringify(updatedMessages))
+    }
   }
 
   onAuthFailed (event) {
@@ -56,64 +89,94 @@ class ChatApp extends React.Component {
   }
 
   onAuthSuccess () {
-    this.setState({ loggingIn: false, loggedIn: true })
+    const { cookies } = this.props
+    const { username, password } = this.state
+    const expires = new Date()
+    expires.setDate(expires.getDate() + 1)
+    // @XXX WARNING: THIS IS INSECURE BY DESIGN AS PASSWORD IS NOT ENCRYPTED
+    // AND IS DONE FOR DEMO PURPOSES ONLY - NOT SUITABLE FOR PRODUCTION ENVIRONMENTS
+    cookies.set('credentials', JSON.stringify({
+      username,
+      password
+    }), {
+      expires,
+      path: '/'
+    })
+    this.setState({
+      loggingIn: false,
+      loggedIn: true,
+      connecting: false
+    })
   }
 
-  onLogin (credentials, receiver) {
+  onLogin (credentials) {
+    if (!credentials.username || !credentials.password) return
     this.setState({
       loggingIn: true,
       username: credentials.username,
-      receiver
+      password: credentials.password,
+      loginError: ''
     })
     this.chatClient.create(credentials)
     this.chatClient.connect()
   }
 
   onLogout () {
-    this.setState({
-      loggedIn: false,
-      username: '',
-      receiver: '',
-      messages: []
-    })
+    this.setState(this.initialState)
     this.chatClient.disconnect()
+    this.props.cookies.remove('credentials')
+    localStorage.removeItem('messages')
   }
 
-  onMessage (message) {
-    message.body && this.setState({
-      messages: [
-        ...this.state.messages,
-        { from: message.from, body: message.body }
-      ]
-    }, () => {
-      this.wrapper.current.scrollBy(0, 1000000)
+  onNewChat (receiver) {
+    this.setState({
+      receiver,
+      section: 'chat'
     })
+  }
+
+  scrollChat () {
+    const { current } = this.wrapper
+    current && current.scrollBy(0, current.offsetTop + current.offsetHeight)
+  }
+
+  onBack () {
+    if (this.state.section === 'chat') {
+      this.setState({ section: 'history' })
+    }
   }
 
   render () {
-    const { loginError, loggedIn, loggingIn, messages, receiver } = this.state
+    const { connecting, section, receiver, loginError, loggedIn, loggingIn, messages } = this.state
+
     return (
-      <ThemeProvider theme={theme}>
-        <div className="ChatApp">
-          {!loggedIn
-          ? <Login
-              errorMessage={loginError}
-              loggingIn={loggingIn}
-              onLogin={this.onLogin.bind(this)}
-            />
-          : <ChatBox
-              loggingIn={loggingIn}
-              messages={messages}
-              onLogout={this.onLogout.bind(this)}
-              onSendMessage={this.onSendMessage.bind(this)}
-              receiver={receiver}
-              wrapperRef={this.wrapper}
-            />
-          }
-        </div>
-      </ThemeProvider>
+      <CookiesProvider>
+        <ThemeProvider theme={theme}>
+          <div className="ChatApp">
+            {!loggedIn
+            ? <Login
+                errorMessage={loginError}
+                loggingIn={loggingIn}
+                onLogin={this.onLogin.bind(this)}
+              />
+            : <MainScreen
+                hasBackButton={section === 'chat'}
+                onBack={this.onBack.bind(this)}
+                receiver={receiver}
+                section={section}
+                onNewChat={this.onNewChat.bind(this)}
+                connecting={connecting}
+                messages={messages}
+                onLogout={this.onLogout.bind(this)}
+                onSendMessage={this.onSendMessage.bind(this)}
+                messageWrapper={this.wrapper}
+              />
+            }
+          </div>
+        </ThemeProvider>
+      </CookiesProvider>
     )
   }
 }
 
-export default ChatApp
+export default withCookies(ChatApp)

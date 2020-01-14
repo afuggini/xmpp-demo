@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import { Alert } from '@material-ui/lab'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
@@ -17,17 +18,27 @@ const useStyles = makeStyles(theme => ({
       marginBottom: theme.spacing(3)
     },
   },
+  wrapper: {
+    display: 'inline-block',
+    position: 'relative'
+  },
+  buttonProgress: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  }
 }))
 
 const Login = ({ onLogin, loggingIn, errorMessage }) => {
   const classes = useStyles()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [receiver, setReceiver] = useState('')
 
   const onSubmit = event => {
     event.preventDefault()
-    onLogin({ username, password }, receiver)
+    onLogin({ username, password })
   }
 
   return (
@@ -53,23 +64,17 @@ const Login = ({ onLogin, loggingIn, errorMessage }) => {
           onChange={e => setPassword(e.target.value)}
           value={password}
         />
-        <TextField
-          fullWidth
-          id="receiver"
-          label="Chat with"
-          variant="outlined"
-          placeholder="user@conversejs.org"
-          onChange={e => setReceiver(e.target.value)}
-          value={receiver}
-        />
-        <Button
-          color="primary"
-          disabled={loggingIn}
-          type="submit"
-          variant="contained"
-        >
-          Login
-        </Button>
+        <div className={classes.wrapper}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={loggingIn}
+            type="submit"
+          >
+            Login
+          </Button>
+          {loggingIn && <CircularProgress size={24} className={classes.buttonProgress} />}
+        </div>
       </form>
     </Container>
   )
