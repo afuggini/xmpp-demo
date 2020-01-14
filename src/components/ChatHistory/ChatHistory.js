@@ -27,8 +27,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 3, 4),
   },
   textField: {
-    marginBottom: theme.spacing(2 )
+    marginBottom: theme.spacing(2)
   },
+  noChats: {
+    padding: theme.spacing(1, 3)
+  },
+  addIcon: {
+    marginBottom: '-4px'
+  }
 }))
 
 const ChatHistory = ({ messages, onNewChat }) => {
@@ -44,7 +50,9 @@ const ChatHistory = ({ messages, onNewChat }) => {
 
   return (
     <div className="ChatHistory">
-      <HistoryList messages={messages} onNewChat={onNewChat} />
+      {Object.keys(messages).length
+        ? <HistoryList messages={messages} onNewChat={onNewChat} />
+        : <p className={classes.noChats}>No chats yet. Start a new chat by clicking the <AddIcon className={classes.addIcon} /> button.</p>}
       <Fab
         color="primary"
         aria-label="add"
