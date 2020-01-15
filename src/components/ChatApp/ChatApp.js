@@ -63,7 +63,7 @@ class ChatApp extends React.Component {
     const updatedMessages = { ...messages }
     updatedMessages[receiver] = messages[receiver] || []
     updatedMessages[receiver].push({ from: 'Me', to: receiver, body })
-    this.chatClient.send({ to: receiver, body })
+    this.chatClient.send({ to: receiver, type: 'chat', body })
     this.setState({ messages: updatedMessages }, this.scrollChat.bind(this))
     localStorage.setItem('messages', JSON.stringify(updatedMessages))
   }
@@ -129,9 +129,6 @@ class ChatApp extends React.Component {
   }
 
   onNewChat (receiver) {
-    if (receiver.indexOf('@conversejs.org') < 0) {
-      receiver += '@conversejs.org'
-    }
     this.setState({ receiver, section: 'chat' })
   }
 

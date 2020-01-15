@@ -9,7 +9,7 @@ export default class ChatClient {
 
   create ({ username, password }) {
     const client = XMPP.createClient({
-      jid: username.indexOf('@conversejs.org') > 0 ? username : `${username}@conversejs.org`,
+      jid: username,
       password,
       transports: {
         websocket: 'wss://conversejs.org/xmpp-websocket',
