@@ -4,10 +4,6 @@
 
 ## How it works
 
-This app uses conversejs.org servers. Therefore please login with a `@conversejs.org` account.
-
-To start a new chat also enter `@conversejs.org` accounts.
-
 Some of the things that were left out for simplicity purposes:
 
 - Authentication security (password is kept in memory unencrypted, makes this not suitable for production)
