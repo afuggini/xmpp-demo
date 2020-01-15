@@ -63,7 +63,7 @@ class ChatApp extends React.Component {
     const updatedMessages = { ...messages }
     updatedMessages[receiver] = messages[receiver] || []
     updatedMessages[receiver].push({ from: 'Me', to: receiver, body })
-    this.chatClient.send({ to: receiver, body })
+    this.chatClient.send({ to: receiver, type: 'chat', body })
     this.setState({ messages: updatedMessages }, this.scrollChat.bind(this))
     localStorage.setItem('messages', JSON.stringify(updatedMessages))
   }
