@@ -129,9 +129,6 @@ class ChatApp extends React.Component {
   }
 
   onNewChat (receiver) {
-    if (receiver.indexOf('@conversejs.org') < 0) {
-      receiver += '@conversejs.org'
-    }
     this.setState({ receiver, section: 'chat' })
   }
 
